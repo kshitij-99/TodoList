@@ -24,10 +24,20 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/ic_delete_sweep_white_24dp"
                 tools:ignore="ContentDescription" />
+            <CheckBox
+                android:layout_width="36dp"
+                android:id="@+id/checkbox"
+                android:layout_below="@id/delete"
+                android:layout_alignParentEnd="true"
+                android:buttonTint="@android:color/white"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+
+                android:layout_height="36dp"/>
 
 
             <LinearLayout

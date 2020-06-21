@@ -1,12 +1,15 @@
 package com.example.todolist;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,12 +44,35 @@ public class ItemAdapter extends BaseAdapter {
 
 
     @Override
-    public View getView(int position, View convertView, final ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = layoutInflater.inflate(R.layout.row_item, null);
-        TextView titleTextView = convertView.findViewById(R.id.title);
-        TextView dateTextView = convertView.findViewById(R.id.dateTitle);
-        TextView timeTextView = convertView.findViewById(R.id.timeTitle);
+        final TextView titleTextView = convertView.findViewById(R.id.title);
+        final TextView dateTextView = convertView.findViewById(R.id.dateTitle);
+        final TextView timeTextView = convertView.findViewById(R.id.timeTitle);
+        CheckBox checkBox = convertView.findViewById(R.id.checkbox);
+        checkBox.setTag(position);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int pos=(int)buttonView.getTag();
+                if(isChecked)
+                {
+                    titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    dateTextView.setPaintFlags(dateTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    timeTextView.setPaintFlags(timeTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+                }
+                else
+                {
+                    titleTextView.setPaintFlags(titleTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    dateTextView.setPaintFlags(dateTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    timeTextView.setPaintFlags(timeTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+
+                }
+            }
+        });
         final ImageView delImageView = convertView.findViewById(R.id.delete);
         delImageView.setTag(position);
 
@@ -82,6 +108,16 @@ public class ItemAdapter extends BaseAdapter {
         titleTextView.setText(dataModel.getTitle());
         dateTextView.setText(dataModel.getDate());
         timeTextView.setText(dataModel.getTime());
+        String check= dataModel.getCheck();
+        if(check.matches("true"))
+        {
+
+            checkBox.setChecked(true);
+        }
+        else
+        {
+            checkBox.setChecked(false);
+        }
         return convertView;
 
     }
@@ -91,6 +127,22 @@ public class ItemAdapter extends BaseAdapter {
         deleteItemFromDb(arrayList.get(position).getTitle(), arrayList.get(position).getDate(), arrayList.get(position).getTime());
         arrayList.remove(position);
         notifyDataSetChanged();
+    }
+    public void updateItem(int position,String  check){
+        updateItemInDb(arrayList.get(position).getTitle(), arrayList.get(position).getDate(), arrayList.get(position).getTime(),check);
+        notifyDataSetChanged();
+
+    }
+    public void updateItemInDb(String name,String date, String time, String check)
+    {
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+        try {
+            databaseHelper.update(name,date,time,check);
+            toastMsg("Done Successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            toastMsg("Something went wrong");
+        }
     }
 
     //Delete item from database

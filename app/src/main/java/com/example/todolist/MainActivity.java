@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Insert data to database
     private void insertDataToDb(String title, String date, String time) {
-        boolean insertData = databaseHelper.insertData(title, date, time);
+        boolean insertData = databaseHelper.insertData(title, date, time,"false");
         if (insertData) {
             try {
                 populateListView();

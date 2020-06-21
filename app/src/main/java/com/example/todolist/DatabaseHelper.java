@@ -18,9 +18,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL2 = "Name";
     private static final String COL3 = "Date";
     private static final String COL4 = "Time";
+    private static final String COL5 = "Che";
 
     public DatabaseHelper(Context context) {
-        super(context, TABLE_NAME, null, 1);
+        super(context, TABLE_NAME, null, 2);
     }
 
     @Override
@@ -29,7 +30,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COL2 + " TEXT, "
                 + COL3 + " DATE, "
-                + COL4 + " TIME" + ");";
+                + COL4 + " TIME, "
+                + COL5 + " TEXT" + ");";
         Log.d(TAG, "Creating table " + createTable);
         db.execSQL(createTable);
     }
@@ -41,12 +43,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //Insert data into database
-    public boolean insertData(String item, String date, String time) {
+    public boolean insertData(String item, String date, String time, String check) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL2, item);
         contentValues.put(COL3, date);
         contentValues.put(COL4, time);
+        contentValues.put(COL5, check);
         Log.d(TAG, "insertData: Inserting " + item + " to " + TABLE_NAME);
         long result = db.insert(TABLE_NAME, null, contentValues);
         db.close();
@@ -61,9 +64,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COL2 + "= '" + name + "'" +
                     " AND " + COL3 + "= '" + date + "'" +
                     " AND " + COL4 + "= '" + time + "'";
+
             db.execSQL(query);
             Log.d(TAG, "deleteItem: " + query);
             Log.d(TAG, "deleteData: Deleted " + name + " from database");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        db.close();
+    }
+    public void update(String name, String date, String time, String check)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            String query = "UPDATE "+TABLE_NAME +" SET " + COL5+ " = '"+check+"' WHERE " +
+                    COL2 + "= '" + name + "'" +
+                    " AND " + COL3 + "= '" + date + "'" +
+                    " AND " + COL4 + "= '" + time + "'";
+
+            db.execSQL(query);
+            Log.d(TAG, "update: " + query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,7 +101,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String title = cursor.getString(1);
             String date = cursor.getString(2);
             String time = cursor.getString(3);
-            DataModel dataModel = new DataModel(title, date, time);
+            String check = cursor.getString(4);
+            DataModel dataModel = new DataModel(title, date, time,check);
             arrayList.add(dataModel);
         }
         db.close();

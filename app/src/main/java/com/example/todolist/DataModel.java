@@ -5,11 +5,13 @@ public class DataModel {
     private String title;
     private String date;
     private String time;
+    private String check;
 
-    public DataModel(String title, String date, String time) {
+    public DataModel(String title, String date, String time,String check) {
         this.title = title;
         this.date = date;
         this.time = time;
+        this.check=check;
     }
 
     public String getTitle() {
@@ -24,4 +26,5 @@ public class DataModel {
         return time;
     }
 
+    public String getCheck() { return check; }
 }
