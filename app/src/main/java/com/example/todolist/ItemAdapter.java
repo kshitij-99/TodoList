@@ -2,6 +2,7 @@ package com.example.todolist;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,30 +51,41 @@ public class ItemAdapter extends BaseAdapter {
         final TextView titleTextView = convertView.findViewById(R.id.title);
         final TextView dateTextView = convertView.findViewById(R.id.dateTitle);
         final TextView timeTextView = convertView.findViewById(R.id.timeTitle);
-        CheckBox checkBox = convertView.findViewById(R.id.checkbox);
+        final CheckBox checkBox = convertView.findViewById(R.id.checkbox);
         checkBox.setTag(position);
-
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int pos=(int)buttonView.getTag();
-                if(isChecked)
+            public void onClick(View v) {
+                int pos=(int)v.getTag();
+                boolean isChecked=checkBox.isChecked();
+                Log.d("what",isChecked+"");
+                if(!isChecked)
                 {
-                    titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    dateTextView.setPaintFlags(dateTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    timeTextView.setPaintFlags(timeTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    updateItem(pos,"false");
+
+                    titleTextView.setPaintFlags(titleTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    dateTextView.setPaintFlags(dateTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    timeTextView.setPaintFlags(timeTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    checkBox.setChecked(false);
 
                 }
                 else
                 {
-                    titleTextView.setPaintFlags(titleTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                    dateTextView.setPaintFlags(dateTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                    timeTextView.setPaintFlags(timeTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    Log.d("what","second");
 
+
+                    updateItem(pos,"true");
+
+                    checkBox.setChecked(true);
+                    titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    dateTextView.setPaintFlags(dateTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    timeTextView.setPaintFlags(timeTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
+
             }
         });
-        final ImageView delImageView = convertView.findViewById(R.id.delete);
+
+          final ImageView delImageView = convertView.findViewById(R.id.delete);
         delImageView.setTag(position);
 
         final View finalConvertView = convertView;
@@ -113,9 +125,16 @@ public class ItemAdapter extends BaseAdapter {
         {
 
             checkBox.setChecked(true);
+            titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            dateTextView.setPaintFlags(dateTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            timeTextView.setPaintFlags(timeTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
         else
         {
+
+            titleTextView.setPaintFlags(titleTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            dateTextView.setPaintFlags(dateTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            timeTextView.setPaintFlags(timeTextView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             checkBox.setChecked(false);
         }
         return convertView;
@@ -130,7 +149,6 @@ public class ItemAdapter extends BaseAdapter {
     }
     public void updateItem(int position,String  check){
         updateItemInDb(arrayList.get(position).getTitle(), arrayList.get(position).getDate(), arrayList.get(position).getTime(),check);
-        notifyDataSetChanged();
 
     }
     public void updateItemInDb(String name,String date, String time, String check)
