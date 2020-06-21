@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private DatabaseHelper databaseHelper;
     private ArrayList<DataModel> items;
-    private ItemAdapter itemsAdopter;
+    private ItemAdapter itemAdapter;
     private ListView itemsListView;
     private FloatingActionButton fab;
     private ToggleButton toggleTheme;
@@ -164,9 +164,9 @@ public class MainActivity extends AppCompatActivity {
     private void populateListView() {
         try {
             items = databaseHelper.getAllData();
-            itemsAdopter = new ItemAdapter(this, items);
-            itemsListView.setAdapter(itemsAdopter);
-            itemsAdopter.notifyDataSetChanged();
+            itemAdapter = new ItemAdapter(this, items);
+            itemsListView.setAdapter(itemAdapter);
+            itemAdapter.notifyDataSetChanged();
             Log.d(TAG, "populateListView: Displaying data in list view");
         } catch (Exception e) {
             e.printStackTrace();
